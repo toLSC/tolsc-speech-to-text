@@ -1,3 +1,4 @@
+from typing import Union
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import PlainTextResponse
 import os
@@ -10,10 +11,15 @@ model_name = os.getenv("W_MODEL", "base")
 model = whisper.load_model(model_name)
 
 @app.post("/speech-to-text")
-def speech2text(audio_file: UploadFile):
+async def speech2text(audio_file: Union[UploadFile, None] = None):
+  if not audio_file:
+    error_message = "No audio sent"
+    return PlainTextResponse(content=error_message, status_code=400)
+  else:
+    print({"filename": audio_file.filename})
   if not audio_file.filename.endswith(".m4a"):
     error_message = "Invalid file type. Expected .m4a"
-    return PlainTextResponse(content=error_message, status_code=500)
+    return PlainTextResponse(content=error_message, status_code=400)
   with tempfile.NamedTemporaryFile() as fp:
     fp.write(audio_file.file.read())
     try:
