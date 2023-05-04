@@ -1,0 +1,5 @@
+typing
+fastapi
+openai-whisper
+python-multipart
+uvicorn
