@@ -1,5 +1,4 @@
-from typing import Union
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import PlainTextResponse
 import os
 import tempfile
@@ -11,7 +10,7 @@ model_name = os.getenv("W_MODEL", "base")
 model = whisper.load_model(model_name)
 
 @app.post("/speech-to-text")
-async def speech2text(audio_file: Union[UploadFile, None] = None):
+async def speech2text(audio_file: UploadFile = File(...)):
   if not audio_file:
     error_message = "No audio sent"
     return PlainTextResponse(content=error_message, status_code=400)
